@@ -10,7 +10,7 @@ export const Settings: React.FC = () => {
           <h1>System Settings</h1>
           <p>Configure application preferences</p>
         </div>
-        <button className="btn-primary">
+        <button className="btn-primary" onClick={() => alert('Settings saved successfully! ✅')}>
           <Save size={20} />
           Save Changes
         </button>
@@ -95,7 +95,7 @@ export const Settings: React.FC = () => {
         }}>
           <h3 style={{ margin: '0 0 16px 0' }}>SMS Templates</h3>
           <p style={{ color: '#6b7280', marginBottom: '16px' }}>Configure SMS notification templates for customers and staff</p>
-          <button className="btn-secondary">Manage Templates</button>
+          <button className="btn-secondary" onClick={() => alert('SMS Templates:\n\n• Payment reminder\n• Order confirmation\n• Delivery notification\n• Welcome message\n• Thank you message')}>Manage Templates</button>
         </div>
       </div>
     </div>

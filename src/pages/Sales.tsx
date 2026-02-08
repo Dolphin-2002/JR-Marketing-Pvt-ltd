@@ -1,12 +1,17 @@
 import React from 'react';
 import { Search, Filter, Plus, Eye, Download } from 'lucide-react';
 import { mockSales } from '../data/mockData';
+import { Modal } from '../components/Modal';
+import type { Sale } from '../types';
 import './Sales.css';
 
 export const Sales: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [filterStatus, setFilterStatus] = React.useState('all');
   const [filterPayment, setFilterPayment] = React.useState('all');
+  const [showNewSaleModal, setShowNewSaleModal] = React.useState(false);
+  const [showViewModal, setShowViewModal] = React.useState(false);
+  const [selectedSale, setSelectedSale] = React.useState<Sale | null>(null);
 
   const filteredSales = mockSales.filter(sale => {
     const matchesSearch = sale.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -26,14 +31,119 @@ export const Sales: React.FC = () => {
     }
   };
 
+  const handleViewSale = (sale: Sale) => {
+    setSelectedSale(sale);
+    setShowViewModal(true);
+  };
+
+  const handleNewSale = () => {
+    alert('New sale created successfully! 🎉');
+    setShowNewSaleModal(false);
+  };
+
+  const handleExport = () => {
+    alert('Sales data exported successfully! 📊\n\nDownload: sales_report.xlsx');
+  };
+
   return (
+    <>
+      <Modal
+        isOpen={showNewSaleModal}
+        onClose={() => setShowNewSaleModal(false)}
+        title="Create New Sale"
+        size="large"
+      >
+        <div>
+          <div className="form-group">
+            <label>Customer *</label>
+            <select defaultValue="">
+              <option value="" disabled>Select customer</option>
+              <option value="1">ABC Traders</option>
+              <option value="2">XYZ Corporation</option>
+              <option value="3">DEF Company</option>
+              <option value="4">GHI Enterprises</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Payment Method *</label>
+            <select defaultValue="">
+              <option value="" disabled>Select payment method</option>
+              <option value="cash">Cash</option>
+              <option value="cheque">Cheque</option>
+              <option value="bank">Bank Transfer</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Amount *</label>
+            <input type="number" placeholder="Enter amount" />
+          </div>
+          <div className="form-group">
+            <label>Notes</label>
+            <textarea placeholder="Add any notes or remarks..."></textarea>
+          </div>
+          <div className="form-actions">
+            <button className="btn-cancel" onClick={() => setShowNewSaleModal(false)}>Cancel</button>
+            <button className="btn-submit" onClick={handleNewSale}>Create Sale</button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={showViewModal}
+        onClose={() => setShowViewModal(false)}
+        title={`Sale Details - ${selectedSale?.id}`}
+        size="medium"
+      >
+        {selectedSale && (
+          <div>
+            <div style={{ marginBottom: '20px' }}>
+              <p style={{ marginBottom: '8px' }}><strong>Customer:</strong> {selectedSale.customerName}</p>
+              <p style={{ marginBottom: '8px' }}><strong>Date:</strong> {new Date(selectedSale.date).toLocaleDateString()}</p>
+              <p style={{ marginBottom: '8px' }}><strong>Payment Method:</strong> {selectedSale.paymentMethod}</p>
+              <p style={{ marginBottom: '8px' }}>
+                <strong>Status:</strong>{' '}
+                <span className={`status-badge ${getStatusClass(selectedSale.paymentStatus)}`}>
+                  {selectedSale.paymentStatus}
+                </span>
+              </p>
+            </div>
+            <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', marginBottom: '20px' }}>
+              <h4 style={{ marginBottom: '12px' }}>Items</h4>
+              {selectedSale.items.map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <span>{item.productName} (x{item.quantity})</span>
+                  <span>₹{item.total.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ background: '#eff6ff', padding: '16px', borderRadius: '12px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <strong>Total:</strong>
+                <strong>₹{selectedSale.total.toLocaleString()}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <span>Paid:</span>
+                <span style={{ color: '#10b981' }}>₹{selectedSale.paid.toLocaleString()}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Due:</span>
+                <span style={{ color: '#ef4444' }}>₹{(selectedSale.total - selectedSale.paid).toLocaleString()}</span>
+              </div>
+            </div>
+            <div className="form-actions">
+              <button className="btn-cancel" onClick={() => setShowViewModal(false)}>Close</button>
+              <button className="btn-submit" onClick={() => alert('Invoice printed! 🖨️')}>Print Invoice</button>
+            </div>
+          </div>
+        )}
+      </Modal>
     <div className="sales-page">
       <div className="page-header">
         <div>
           <h1>Sales Management</h1>
           <p>Manage all sales transactions and invoices</p>
         </div>
-        <button className="btn-primary">
+        <button className="btn-primary" onClick={() => setShowNewSaleModal(true)}>
           <Plus size={20} />
           New Sale
         </button>
@@ -71,7 +181,7 @@ export const Sales: React.FC = () => {
             </select>
           </div>
 
-          <button className="btn-secondary">
+          <button className="btn-secondary" onClick={handleExport}>
             <Download size={18} />
             Export
           </button>
@@ -127,7 +237,7 @@ export const Sales: React.FC = () => {
                 </td>
                 <td>{sale.paymentMethod}</td>
                 <td>
-                  <button className="icon-btn" title="View Details">
+                  <button className="icon-btn" title="View Details" onClick={() => handleViewSale(sale)}>
                     <Eye size={18} />
                   </button>
                 </td>
@@ -137,5 +247,6 @@ export const Sales: React.FC = () => {
         </table>
       </div>
     </div>
+    </>
   );
 };

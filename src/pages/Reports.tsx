@@ -64,7 +64,7 @@ export const Reports: React.FC = () => {
                 }}>
                   <Icon size={24} />
                 </div>
-                <button className="icon-btn">
+                <button className="icon-btn" onClick={() => alert(`Generating ${report.name}...\n\n✅ Report ready for download!`)}>
                   <Download size={18} />
                 </button>
               </div>

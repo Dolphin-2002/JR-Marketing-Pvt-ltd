@@ -1,17 +1,54 @@
 import React from 'react';
 import { Search, Plus, Edit, Upload } from 'lucide-react';
 import { mockCustomers } from '../data/mockData';
+import { Modal } from '../components/Modal';
 import '../pages/Sales.css';
 
 export const Customers: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [showAddModal, setShowAddModal] = React.useState(false);
 
   const filteredCustomers = mockCustomers.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleAddCustomer = () => {
+    alert('Customer added successfully! 👤');
+    setShowAddModal(false);
+  };
+
   return (
+    <>
+      <Modal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        title="Add New Customer"
+        size="medium"
+      >
+        <div>
+          <div className="form-group">
+            <label>Customer Name *</label>
+            <input type="text" placeholder="Enter customer name" />
+          </div>
+          <div className="form-group">
+            <label>Email *</label>
+            <input type="email" placeholder="customer@example.com" />
+          </div>
+          <div className="form-group">
+            <label>Phone *</label>
+            <input type="tel" placeholder="Enter phone number" />
+          </div>
+          <div className="form-group">
+            <label>Address</label>
+            <textarea placeholder="Enter complete address"></textarea>
+          </div>
+          <div className="form-actions">
+            <button className="btn-cancel" onClick={() => setShowAddModal(false)}>Cancel</button>
+            <button className="btn-submit" onClick={handleAddCustomer}>Add Customer</button>
+          </div>
+        </div>
+      </Modal>
     <div className="sales-page">
       <div className="page-header">
         <div>
@@ -19,11 +56,11 @@ export const Customers: React.FC = () => {
           <p>Manage customer contacts and balances</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="btn-secondary">
+          <button className="btn-secondary" onClick={() => alert('Import feature: Upload Excel with columns:\nName, Email, Phone, Address')}>
             <Upload size={18} />
             Import
           </button>
-          <button className="btn-primary">
+          <button className="btn-primary" onClick={() => setShowAddModal(true)}>
             <Plus size={20} />
             Add Customer
           </button>
@@ -70,7 +107,7 @@ export const Customers: React.FC = () => {
                   </span>
                 </td>
                 <td>
-                  <button className="icon-btn" title="Edit">
+                  <button className="icon-btn" title="Edit" onClick={() => alert(`Editing customer: ${customer.name}`)}>
                     <Edit size={18} />
                   </button>
                 </td>
@@ -80,5 +117,6 @@ export const Customers: React.FC = () => {
         </table>
       </div>
     </div>
+    </>
   );
 };

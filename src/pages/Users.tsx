@@ -1,22 +1,69 @@
 import React from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Modal } from '../components/Modal';
 import '../pages/Sales.css';
 
 export const Users: React.FC = () => {
+  const [showAddModal, setShowAddModal] = React.useState(false);
+
   const users = [
     { id: '1', name: 'Admin User', username: 'admin', role: 'Admin', email: 'admin@jrmarketing.com', status: 'Active' },
     { id: '2', name: 'Staff Member 1', username: 'staff1', role: 'Staff', email: 'staff1@jrmarketing.com', status: 'Active' },
     { id: '3', name: 'Reference User', username: 'ref1', role: 'Ref', email: 'ref1@jrmarketing.com', status: 'Active' },
   ];
 
+  const handleAddUser = () => {
+    alert('User added successfully! 👤');
+    setShowAddModal(false);
+  };
+
   return (
+    <>
+      <Modal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        title="Add New User"
+        size="medium"
+      >
+        <div>
+          <div className="form-group">
+            <label>Full Name *</label>
+            <input type="text" placeholder="Enter full name" />
+          </div>
+          <div className="form-group">
+            <label>Username *</label>
+            <input type="text" placeholder="Enter username" />
+          </div>
+          <div className="form-group">
+            <label>Email *</label>
+            <input type="email" placeholder="user@example.com" />
+          </div>
+          <div className="form-group">
+            <label>Role *</label>
+            <select defaultValue="">
+              <option value="" disabled>Select role</option>
+              <option value="admin">Admin</option>
+              <option value="staff">Staff</option>
+              <option value="ref">Ref</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Password *</label>
+            <input type="password" placeholder="Enter password" />
+          </div>
+          <div className="form-actions">
+            <button className="btn-cancel" onClick={() => setShowAddModal(false)}>Cancel</button>
+            <button className="btn-submit" onClick={handleAddUser}>Add User</button>
+          </div>
+        </div>
+      </Modal>
     <div className="sales-page">
       <div className="page-header">
         <div>
           <h1>User Management</h1>
           <p>Manage system users and access control</p>
         </div>
-        <button className="btn-primary">
+        <button className="btn-primary" onClick={() => setShowAddModal(true)}>
           <Plus size={20} />
           Add User
         </button>
@@ -54,10 +101,14 @@ export const Users: React.FC = () => {
                 </td>
                 <td>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button className="icon-btn" title="Edit">
+                    <button className="icon-btn" title="Edit" onClick={() => alert(`Editing user: ${user.name}`)}>
                       <Edit size={18} />
                     </button>
-                    <button className="icon-btn" title="Delete" style={{ color: '#ef4444' }}>
+                    <button className="icon-btn" title="Delete" style={{ color: '#ef4444' }} onClick={() => {
+                      if (confirm(`Are you sure you want to delete ${user.name}?`)) {
+                        alert('User deleted successfully!');
+                      }
+                    }}>
                       <Trash2 size={18} />
                     </button>
                   </div>
@@ -68,5 +119,6 @@ export const Users: React.FC = () => {
         </table>
       </div>
     </div>
+    </>
   );
 };
