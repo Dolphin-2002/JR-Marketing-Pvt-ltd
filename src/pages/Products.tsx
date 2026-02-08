@@ -7,7 +7,6 @@ import '../pages/Sales.css';
 export const Products: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showAddModal, setShowAddModal] = React.useState(false);
-  const [showEditModal, setShowEditModal] = React.useState(false);
   const [showImportModal, setShowImportModal] = React.useState(false);
 
   const filteredProducts = mockProducts.filter(product =>
@@ -165,11 +164,7 @@ export const Products: React.FC = () => {
                 </td>
                 <td>
                   <button className="icon-btn" title="Edit" onClick={() => {
-                    setShowEditModal(true);
-                    setTimeout(() => {
-                      alert(`Editing ${product.name}`);
-                      setShowEditModal(false);
-                    }, 100);
+                    alert(`Editing ${product.name}`);
                   }}>
                     <Edit size={18} />
                   </button>
